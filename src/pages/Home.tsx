@@ -1,33 +1,32 @@
-import { Link } from "react-router-dom";
+import { lazy, Suspense, useState } from "react";
 import Hero from "../components/Hero";
-import ProjectCard from "../components/ProjectCard";
-import Reveal from "../components/Reveal";
-import { About, Contact, Footer, Label, Skills, Timeline } from "../components/Sections";
+import { About, Ambient, Contact, Footer, Marquee, Skills, Timeline, Work } from "../components/Sections";
 import { useSettings } from "../lib/SettingsContext";
 
+const Stage = lazy(() => import("../components/Stage"));
+
 export default function Home() {
-  const { projects } = useSettings();
-  const featured = projects.filter((p) => p.featured).slice(0, 4);
-  const list = featured.length ? featured : projects.slice(0, 4);
+  const { settings: s } = useSettings();
+  const [failed, setFailed] = useState(false);
+  const useStage = !!s.character.model && !failed;
   return (
     <>
-      <Hero />
-      <About />
-      <Skills />
-      <Timeline />
-      <section className="section">
-        <div className="wrap">
-          <Reveal>
-            <Label n="04">Selected work</Label>
-          </Reveal>
-          <div className="pgrid">
-            {list.map((p, i) => <Reveal key={p.id} delay={i * 80}><ProjectCard p={p} /></Reveal>)}
-          </div>
-          <Reveal><Link to="/projects" className="btn btn-solid all">All projects →</Link></Reveal>
-        </div>
-      </section>
-      <Contact />
-      <Footer />
+      <Ambient />
+      {useStage && (
+        <Suspense fallback={null}>
+          <Stage cfg={s.character} onFail={() => setFailed(true)} />
+        </Suspense>
+      )}
+      <main className="main">
+        <Hero embedded={!useStage} />
+        <Marquee />
+        <About />
+        <Skills />
+        <Timeline />
+        <Work />
+        <Contact />
+        <Footer />
+      </main>
     </>
   );
 }

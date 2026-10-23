@@ -2,7 +2,14 @@ import type { Project } from "../lib/types";
 
 export default function ProjectCard({ p }: { p: Project }) {
   return (
-    <article className="pcard">
+    <article
+      className="pcard"
+      onPointerMove={(e) => {
+        const r = e.currentTarget.getBoundingClientRect();
+        e.currentTarget.style.setProperty("--x", `${e.clientX - r.left}px`);
+        e.currentTarget.style.setProperty("--y", `${e.clientY - r.top}px`);
+      }}
+    >
       <div className="pcard-img">
         {p.image_url ? <img src={p.image_url} alt={p.title} loading="lazy" /> : <span>{p.title.slice(0, 1)}</span>}
       </div>

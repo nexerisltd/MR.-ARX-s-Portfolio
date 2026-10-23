@@ -1,9 +1,12 @@
-import { useEffect } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
+import Cursor from "./components/Cursor";
+import Loader from "./components/Loader";
 import Nav from "./components/Nav";
-import AdminPage from "./pages/admin/AdminPage";
 import Home from "./pages/Home";
 import ProjectsPage from "./pages/ProjectsPage";
+
+const AdminPage = lazy(() => import("./pages/admin/AdminPage"));
 
 function ScrollManager() {
   const { pathname, hash } = useLocation();
@@ -16,16 +19,25 @@ function ScrollManager() {
 
 export default function App() {
   const { pathname } = useLocation();
+  // preloader shudhu Home e prothom load e
+  const [booting, setBooting] = useState(pathname === "/");
+  useEffect(() => {
+    if (!booting) document.documentElement.classList.add("ready");
+  }, [booting]);
   return (
     <>
+      {booting && <Loader onDone={() => setBooting(false)} />}
+      <Cursor />
       <ScrollManager />
       {!pathname.startsWith("/admin") && <Nav />}
+      <Suspense fallback={null}>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/projects" element={<ProjectsPage />} />
         <Route path="/admin" element={<AdminPage />} />
         <Route path="*" element={<Home />} />
       </Routes>
+      </Suspense>
     </>
   );
 }

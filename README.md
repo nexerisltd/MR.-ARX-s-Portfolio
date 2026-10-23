@@ -25,4 +25,11 @@ Tip: model ta oi bhabe thikmoto face kore na thakle admin e Rotation slider diye
 ## Default content
 
 Supabase connect na thakle `src/lib/defaults.ts` er content dekhabe. `public/character/` e default 3D model, photo ar depth map deya ache.
-"# MR.-ARX-s-Portfolio" 
+
+## Scroll animation (kon file e ki)
+
+- `src/lib/scrollEngine.ts` — chhoto scroll engine; element er scroll progress `--p` CSS variable e boshay, smoothed scrollY `--sy` e.
+- `src/components/Stage.tsx` — fixed full-screen 3D stage. Character scroll e section theke section e soray/ghuray. Proti section e `data-stage="..."` ache; position/scale/rotation er table `DESK` ar `MOB` object e (file er upore) — ekhane x/y/scale/rotation/opacity bodlale character er path bodlay.
+- `src/components/Sections.tsx` — pinned About (shobdo jole), stacking skill cards, drawing timeline, horizontal Work scroll, Contact.
+- `src/components/Loader.tsx`, `Cursor.tsx`, `SplitText.tsx` — preloader, custom cursor + magnetic button, text reveal.
+- Hero te character drag kore ghurano jay (desktop + touch).
