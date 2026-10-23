@@ -9,6 +9,8 @@ export default function ProfileTab() {
   const { settings, saveSettings } = useSettings();
   const [f, setF] = useState({
     brand: settings.brand,
+    parentBody: settings.parentBody,
+    subBrands: settings.subBrands.map((b) => `${b.name} | ${b.body} | ${b.url}`).join("\n"),
     name: settings.name,
     alias: settings.alias,
     role: settings.role,
@@ -26,7 +28,8 @@ export default function ProfileTab() {
     setMsg("Saving…");
     const next: SiteSettings = {
       ...settings,
-      brand: f.brand, name: f.name, alias: f.alias, role: f.role, tagline: f.tagline, email: f.email,
+      brand: f.brand, parentBody: f.parentBody, name: f.name, alias: f.alias, role: f.role, tagline: f.tagline, email: f.email,
+      subBrands: lines(f.subBrands).map((l) => { const [name, body, url] = parts(l); return { name, body: body ?? "", url: url ?? "" }; }),
       about: f.about.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean),
       socials: lines(f.socials).map((l) => { const [label, url] = parts(l); return { label, url: url ?? "" }; }),
       skills: lines(f.skills).map((l) => { const [title, body, tags] = parts(l); return { title, body: body ?? "", tags: (tags ?? "").split(",").map((t) => t.trim()).filter(Boolean) }; }),
@@ -39,12 +42,14 @@ export default function ProfileTab() {
     <div className="panel wide">
       <h2>Profile & content</h2>
       <div className="grid2">
-        <label>Brand<input value={f.brand} onChange={set("brand")} /></label>
+        <label>Parent brand (e.g. NexEris)<input value={f.brand} onChange={set("brand")} /></label>
         <label>Alias (hero te boro kore dekhabe)<input value={f.alias} onChange={set("alias")} /></label>
         <label>Full name<input value={f.name} onChange={set("name")} /></label>
         <label>Role<input value={f.role} onChange={set("role")} /></label>
         <label>Email<input value={f.email} onChange={set("email")} /></label>
       </div>
+      <label>Parent brand description (Studio section e dekhabe)<textarea rows={2} value={f.parentBody} onChange={set("parentBody")} /></label>
+      <label>Sub brands (ek line e ekta: <code>Name | Description | URL</code>) — jemon NexApp<textarea rows={3} value={f.subBrands} onChange={set("subBrands")} /></label>
       <label>Tagline<textarea rows={2} value={f.tagline} onChange={set("tagline")} /></label>
       <label>About (paragraph gulo faka line diye alada koro)<textarea rows={6} value={f.about} onChange={set("about")} /></label>
       <label>Social links (ek line e ekta: <code>Label | URL</code>)<textarea rows={3} value={f.socials} onChange={set("socials")} /></label>

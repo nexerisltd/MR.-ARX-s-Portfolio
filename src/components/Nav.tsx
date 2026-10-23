@@ -40,8 +40,9 @@ export default function Nav() {
   return (
     <header className="nav">
       <Link to="/" className="nav-brand">
-        <span className="dot" />
+        {s.favicon?.png32 ? <img className="nav-logo" src={s.favicon.png32} alt="" /> : <span className="dot" />}
         {s.alias}
+        <span className="nav-parent">/ {s.brand}</span>
       </Link>
       <nav className="nav-links">
         <a href={a("#about")} className={cls("about")}>About</a>

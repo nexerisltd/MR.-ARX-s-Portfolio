@@ -28,8 +28,12 @@ export interface FaviconFiles {
   manifest: string;
 }
 
+export interface SubBrand { name: string; body: string; url: string }
+
 export interface SiteSettings {
-  brand: string;
+  brand: string; // parent brand (NexEris)
+  parentBody: string;
+  subBrands: SubBrand[]; // e.g. NexApp
   name: string;
   alias: string;
   role: string;

@@ -3,14 +3,23 @@ import type { Project, SiteSettings } from "./types";
 // Supabase na thakle (ba DB faka thakle) site ei default content diye cholbe.
 // Real content admin panel theke edit koro.
 export const DEFAULT_SETTINGS: SiteSettings = {
-  brand: "NexApp",
+  brand: "NexEris",
+  parentBody:
+    "NexEris is the studio behind everything I build — software, products and the brands that carry them.",
+  subBrands: [
+    {
+      name: "NexApp",
+      body: "The apps label of NexEris — Android and desktop apps, tools and web products people use every day.",
+      url: "https://nexappog.vercel.app",
+    },
+  ],
   name: "Arabi Islam",
   alias: "MR. ARX",
   role: "Android & Desktop App Developer",
   tagline:
     "I build fast, clean apps for Android and desktop — from idea to a shipped release, all on my own.",
   about: [
-    "I'm an independent developer behind NexApp. I design, code and ship my own apps — native Android with Kotlin and Jetpack Compose, desktop with Electron and Tauri.",
+    "I build under NexEris, and ship apps under its NexApp brand. I design, code and release my own products — native Android with Kotlin and Jetpack Compose, desktop with Electron and Tauri.",
     "I like tools that feel instant and stay out of the way: music, downloaders, password vaults and web apps that people actually use every day.",
   ],
   email: "hello@example.com",
@@ -36,7 +45,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
     },
   ],
   timeline: [
-    { when: "Now", title: "Founder — NexApp", body: "Building and maintaining a growing line of apps solo." },
+    { when: "Now", title: "NexEris — NexApp", body: "Building and maintaining a growing line of apps under the NexApp brand." },
     { when: "Before", title: "Independent developer", body: "Forked, customized and shipped open-source and original tools." },
   ],
   character: {

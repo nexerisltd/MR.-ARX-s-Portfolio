@@ -18,6 +18,7 @@ const DESK: Record<string, St> = {
   skills:  { x: 0.62,  y: -0.04, s: 0.88, r: -45, o: 1 },
   journey: { x: -0.6,  y: -0.08, s: 0.82, r: 30,  o: 1 },
   work:    { x: 0,     y: -0.1,  s: 0.7,  r: 0,   o: 0 },
+  studio:  { x: 0.6,   y: -0.04, s: 0.85, r: -35, o: 1 },
   contact: { x: 0.52,  y: -0.02, s: 1.1,  r: -25, o: 1 },
 };
 const MOB: Record<string, St> = {
@@ -26,6 +27,7 @@ const MOB: Record<string, St> = {
   skills:  { x: 0, y: -0.05, s: 0.9,  r: -30, o: 0.1 },
   journey: { x: 0, y: -0.05, s: 0.9,  r: 20,  o: 0.1 },
   work:    { x: 0, y: -0.05, s: 0.8,  r: 0,   o: 0 },
+  studio:  { x: 0, y: -0.05, s: 0.9,  r: 20,  o: 0.1 },
   contact: { x: 0, y: 0.0,   s: 1.0,  r: -20, o: 0.2 },
 };
 const CAM_Z = 7;
@@ -59,13 +61,13 @@ export default function Stage({ cfg, onFail }: { cfg: CharacterCfg; onFail: () =
     const el = host.current!;
     let renderer: THREE.WebGLRenderer;
     try {
-      renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+      renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: "high-performance" });
     } catch {
       onFail();
       window.dispatchEvent(new Event("stage-ready"));
       return;
     }
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.75));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     el.appendChild(renderer.domElement);
     renderer.domElement.style.opacity = "0";
@@ -107,6 +109,13 @@ export default function Stage({ cfg, onFail }: { cfg: CharacterCfg; onFail: () =
     );
     scene.add(dust);
 
+    // character er pechone ghurano amber ring — aura
+    const ringA = new THREE.Mesh(new THREE.TorusGeometry(1.5, 0.006, 8, 180), new THREE.MeshBasicMaterial({ color: 0xd9a15b, transparent: true, opacity: 0.4, blending: THREE.AdditiveBlending, depthWrite: false }));
+    const ringB = new THREE.Mesh(new THREE.TorusGeometry(1.92, 0.004, 8, 180), new THREE.MeshBasicMaterial({ color: 0xffd7a8, transparent: true, opacity: 0.2, blending: THREE.AdditiveBlending, depthWrite: false }));
+    ringA.position.set(0, 0.05, -0.9);
+    ringB.position.set(0, 0.05, -1.3);
+    root.add(ringA, ringB);
+
     let disposed = false, raf = 0, visH = 1, visW = 1, ready = false;
     const dracoLoader = new DRACOLoader();
     dracoLoader.setDecoderPath("https://www.gstatic.com/draco/versioned/decoders/1.5.6/");
@@ -115,8 +124,12 @@ export default function Stage({ cfg, onFail }: { cfg: CharacterCfg; onFail: () =
     loader.setMeshoptDecoder(MeshoptDecoder);
     loader.setCrossOrigin("anonymous");
 
+    let curW = 0, curH = 0;
     const fit = () => {
       const w = window.innerWidth, h = window.innerHeight;
+      // mobile e scroll korle address bar er karone height chhoto-boro hoy — oi resize ignore koro (nahole character kepe uthe)
+      if (curW === w && Math.abs(curH - h) < 140) return;
+      curW = w; curH = h;
       renderer.setSize(w, h);
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
@@ -178,15 +191,29 @@ export default function Stage({ cfg, onFail }: { cfg: CharacterCfg; onFail: () =
 
     // --- input ---
     const target = new THREE.Vector2(), cur = new THREE.Vector2();
-    let dragging = false, lastX = 0, drag = 0, dvel = 0;
+    let dragging = false, intent = false, lastX = 0, startX = 0, startY = 0, drag = 0, dvel = 0;
     const onMove = (e: PointerEvent) => {
       target.set((e.clientX / window.innerWidth) * 2 - 1, (e.clientY / window.innerHeight) * 2 - 1);
-      if (dragging) { dvel = (e.clientX - lastX) * 0.012; drag += dvel; lastX = e.clientX; }
+      if (!dragging) return;
+      if (!intent) {
+        const dx = Math.abs(e.clientX - startX), dy = Math.abs(e.clientY - startY);
+        if (dx > 10 && dx > dy * 1.5) { intent = true; lastX = e.clientX; document.body.classList.add("grabbing"); }
+        else if (dy > 10) dragging = false; // vertical swipe = page scroll, rotate na
+        return;
+      }
+      dvel = (e.clientX - lastX) * 0.012;
+      drag += dvel;
+      lastX = e.clientX;
     };
     const onDown = (e: PointerEvent) => {
-      if ((e.target as Element | null)?.closest?.("[data-stage-drag]")) { dragging = true; lastX = e.clientX; document.body.classList.add("grabbing"); }
+      if (!(e.target as Element | null)?.closest?.("[data-stage-drag]")) return;
+      dragging = true;
+      intent = e.pointerType === "mouse"; // mouse e shorashori, touch e horizontal intent lagbe
+      startX = lastX = e.clientX;
+      startY = e.clientY;
+      if (intent) document.body.classList.add("grabbing");
     };
-    const onUp = () => { dragging = false; document.body.classList.remove("grabbing"); };
+    const onUp = () => { dragging = false; intent = false; document.body.classList.remove("grabbing"); };
     window.addEventListener("pointermove", onMove);
     window.addEventListener("pointerdown", onDown);
     window.addEventListener("pointerup", onUp);
@@ -195,7 +222,8 @@ export default function Stage({ cfg, onFail }: { cfg: CharacterCfg; onFail: () =
     // --- per-frame ---
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const clock = new THREE.Clock();
-    let state: St | null = null, lastY = window.scrollY, spin = 0, intro = 0;
+    let state: St | null = null, lastY = window.scrollY, velS = 0, intro = 0, lastOp = -1;
+    const kk = (rate: number, dt: number) => 1 - Math.exp(-rate * dt);
     const tick = () => {
       raf = requestAnimationFrame(tick);
       const dt = Math.min(clock.getDelta(), 0.12);
@@ -212,16 +240,17 @@ export default function Stage({ cfg, onFail }: { cfg: CharacterCfg; onFail: () =
         const k = clamp01((vh * 0.92 - top) / (vh * 0.8));
         if (k > 0) tgt = mix(tgt, table[secs[i].dataset.stage!] ?? tgt, ease(k));
       }
-      state = state ? mix(state, tgt, reduce ? 1 : 0.075) : tgt;
+      state = state ? mix(state, tgt, reduce ? 1 : kk(4.5, dt)) : tgt;
 
-      // scroll velocity → halka lean/spin
+      // scroll velocity shudhu dust e (character ghurano hoy na — nahole wheel notch e dole)
       const y = window.scrollY;
-      const vel = y - lastY;
+      const v = (y - lastY) / Math.max(dt, 0.001); // px/sec
       lastY = y;
-      spin += (Math.max(-0.7, Math.min(0.7, vel * 0.012)) - spin) * 0.08;
+      velS += (v - velS) * kk(7, dt);
+      const vel = velS / 60; // ~px/frame-equivalent (dust er jonno)
 
-      cur.lerp(target, 0.06);
-      if (!dragging) { drag += dvel; dvel *= 0.94; drag *= 0.985; }
+      cur.lerp(target, kk(3.6, dt));
+      if (!dragging) { drag += dvel * dt * 60; dvel *= Math.pow(0.94, dt * 60); drag *= Math.pow(0.985, dt * 60); }
       const k = reduce ? 0 : 1;
       if (document.documentElement.classList.contains("ready") && ready) intro = Math.min(1, intro + dt / 1.5);
       const ie = 1 - Math.pow(1 - intro, 3);
@@ -229,15 +258,20 @@ export default function Stage({ cfg, onFail }: { cfg: CharacterCfg; onFail: () =
       const c = cfgRef.current;
       root.position.set(state.x * (visW / 2), state.y * (visH / 2) - (1 - ie) * 0.35, 0);
       root.scale.setScalar(state.s);
-      root.rotation.y = THREE.MathUtils.degToRad(state.r) + cur.x * 0.4 * k + drag + spin * k + Math.sin(t * 0.5) * 0.04 * k;
+      root.rotation.y = THREE.MathUtils.degToRad(state.r) + cur.x * 0.4 * k + drag + Math.sin(t * 0.5) * 0.04 * k;
       root.rotation.x = cur.y * 0.05 * k;
       holder.rotation.y = THREE.MathUtils.degToRad(c.modelRotation);
       holder.scale.setScalar(c.modelScale);
       holder.position.y = c.modelY + Math.sin(t * 0.9) * 0.012 * k;
       renderer.toneMappingExposure = c.modelLight;
       key.position.set(cur.x * 3 + 1.5, 2.5 - cur.y * 1.5, 3.5);
-      renderer.domElement.style.opacity = String((state.o * ie).toFixed(3));
+      const op = Math.round(state.o * ie * 500) / 500;
+      if (op !== lastOp) { lastOp = op; renderer.domElement.style.opacity = String(op); }
 
+      if (!reduce) {
+        ringA.rotation.set(1.15 + Math.sin(t * 0.4) * 0.12, 0.2, t * 0.18);
+        ringB.rotation.set(1.0 + Math.cos(t * 0.3) * 0.15, -0.3, -t * 0.12);
+      }
       if (!reduce) {
         const p = dGeo.attributes.position as THREE.BufferAttribute;
         for (let i = 0; i < DUST; i++) {

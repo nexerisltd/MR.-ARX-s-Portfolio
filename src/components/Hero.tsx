@@ -23,7 +23,9 @@ export default function Hero({ embedded }: { embedded: boolean }) {
       <div className="hero-word" aria-hidden>{s.alias.replace(/[^A-Za-z0-9 ]/g, "")}</div>
       <div className="wrap hero-grid">
         <div className="hero-copy">
-          <p className="eyebrow rise" style={d(0)}>{s.brand} · Portfolio</p>
+          <p className="eyebrow rise" style={d(0)}>
+            <span className="lockup"><b>{s.brand}</b>{s.subBrands[0] && <><i>›</i><em>{s.subBrands[0].name}</em></>}</span>
+          </p>
           <h1><SplitText text={s.alias} by="char" eager delay={2} /></h1>
           <p className="hero-name rise" style={d(650)}>{s.name}</p>
           <p className="hero-role rise" style={d(800)}>{s.role}</p>

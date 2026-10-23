@@ -1,6 +1,6 @@
 import type { Project } from "../lib/types";
 
-export default function ProjectCard({ p }: { p: Project }) {
+export default function ProjectCard({ p, index }: { p: Project; index?: number }) {
   return (
     <article
       className="pcard"
@@ -11,6 +11,7 @@ export default function ProjectCard({ p }: { p: Project }) {
       }}
     >
       <div className="pcard-img">
+        {index != null && <span className="pidx">{String(index).padStart(2, "0")}</span>}
         {p.image_url ? <img src={p.image_url} alt={p.title} loading="lazy" /> : <span>{p.title.slice(0, 1)}</span>}
       </div>
       <div className="pcard-body">

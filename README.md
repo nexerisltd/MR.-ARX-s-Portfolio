@@ -33,3 +33,7 @@ Supabase connect na thakle `src/lib/defaults.ts` er content dekhabe. `public/cha
 - `src/components/Sections.tsx` — pinned About (shobdo jole), stacking skill cards, drawing timeline, horizontal Work scroll, Contact.
 - `src/components/Loader.tsx`, `Cursor.tsx`, `SplitText.tsx` — preloader, custom cursor + magnetic button, text reveal.
 - Hero te character drag kore ghurano jay (desktop + touch).
+
+## Brand structure
+
+Parent brand = **NexEris** (admin > Profile & content > "Parent brand"), sub brand = **NexApp** (admin > "Sub brands", ek line e `Name | Description | URL`). Ei duto hero lockup, nav, "The studio" section, footer ar contact badge e dekhay. Aro sub brand add korte ekta notun line dao.

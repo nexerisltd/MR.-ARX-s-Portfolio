@@ -51,6 +51,7 @@ export default function Loader({ onDone }: { onDone: () => void }) {
     <div className={`loader ${out ? "out" : ""}`}>
       <div className="loader-in">
         <span className="loader-name">{s.alias}</span>
+        <span className="loader-brand">{s.brand}</span>
         <span className="loader-pct">{String(pct).padStart(3, "0")}</span>
       </div>
       <div className="loader-bar"><i style={{ transform: `scaleX(${pct / 100})` }} /></div>

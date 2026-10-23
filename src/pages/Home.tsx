@@ -1,6 +1,6 @@
 import { lazy, Suspense, useState } from "react";
 import Hero from "../components/Hero";
-import { About, Ambient, Contact, Footer, Marquee, Skills, Timeline, Work } from "../components/Sections";
+import { About, Ambient, Contact, Footer, Marquee, Skills, Studio, Timeline, Work } from "../components/Sections";
 import { useSettings } from "../lib/SettingsContext";
 
 const Stage = lazy(() => import("../components/Stage"));
@@ -24,6 +24,7 @@ export default function Home() {
         <Skills />
         <Timeline />
         <Work />
+        <Studio />
         <Contact />
         <Footer />
       </main>
