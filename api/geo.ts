@@ -1,4 +1,4 @@
-import { geolocation, ipAddress } from "@vercel/functions";
+import { geolocation, ipAddress } from "@vercel/functions/headers";
 
 // Vercel Edge Function: visitor er approx. location (Vercel nijei IP theke dey) + IP er salted hash.
 // Default e raw IP kothao save/return hoy na (opt-in niche). Optional: Vercel env e IP_SALT dao (random lomba string).

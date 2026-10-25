@@ -1,4 +1,4 @@
-import { geolocation, ipAddress } from "@vercel/functions";
+import { geolocation, ipAddress } from "@vercel/functions/headers";
 import { classify } from "../src/lib/bots";
 import { BUDGETS, SERVICES, TIMELINES } from "../src/lib/inquiry";
 

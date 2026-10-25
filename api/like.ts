@@ -1,4 +1,4 @@
-import { ipAddress } from "@vercel/functions";
+import { ipAddress } from "@vercel/functions/headers";
 import { classify } from "../src/lib/bots";
 
 /**

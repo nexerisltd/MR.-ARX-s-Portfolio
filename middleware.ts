@@ -1,4 +1,5 @@
-import { geolocation, ipAddress, next, waitUntil } from "@vercel/functions";
+import { geolocation, ipAddress } from "@vercel/functions/headers";
+import { next } from "@vercel/functions/middleware";
 import { classify } from "./src/lib/bots";
 
 /**
@@ -36,14 +37,14 @@ async function log(request: Request, name: string, category: string, ua: string)
   });
 }
 
-export default function middleware(request: Request) {
+export default function middleware(request: Request, context?: { waitUntil?: (p: Promise<unknown>) => void }) {
   try {
     if (request.method === "GET" || request.method === "HEAD") {
       const ua = request.headers.get("user-agent") || "";
       const c = classify(ua);
       if (c.isBot) {
         const p = log(request, c.name, c.category, ua).catch(() => {});
-        try { waitUntil(p); } catch { /* waitUntil nai hole promise tobu cholbe */ }
+        try { context?.waitUntil?.(p); } catch { /* waitUntil nai hole promise tobu cholbe */ }
       }
     }
   } catch { /* ignore */ }
