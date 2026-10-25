@@ -1,5 +1,5 @@
 import { ipAddress } from "@vercel/functions/headers";
-import { classify } from "../src/lib/bots";
+import { classify } from "../src/lib/bots.js";
 
 /**
  * Login chhara like. Ek jon 7 diner moddhe (target prati) ekbar-i like dite pare.

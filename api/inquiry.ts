@@ -1,6 +1,6 @@
 import { geolocation, ipAddress } from "@vercel/functions/headers";
-import { classify } from "../src/lib/bots";
-import { BUDGETS, SERVICES, TIMELINES } from "../src/lib/inquiry";
+import { classify } from "../src/lib/bots.js";
+import { BUDGETS, SERVICES, TIMELINES } from "../src/lib/inquiry.js";
 
 /**
  * "Start a project" form. Server e validate + spam guard, tarpor Supabase e (service role) likha.

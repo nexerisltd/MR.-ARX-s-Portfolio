@@ -1,6 +1,6 @@
 import { geolocation, ipAddress } from "@vercel/functions/headers";
 import { next } from "@vercel/functions/middleware";
-import { classify } from "./src/lib/bots";
+import { classify } from "./src/lib/bots.js";
 
 /**
  * Vercel Routing Middleware: JS na-chalano bot (Googlebot, GPTBot, curl, scanner...) gulo
