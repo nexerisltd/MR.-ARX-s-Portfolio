@@ -16,3 +16,6 @@ export async function uploadBlob(path: string, blob: Blob, contentType?: string)
   if (error) throw error;
   return supabase.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
 }
+
+export const SUPABASE_URL = url;
+export const SUPABASE_KEY = key;

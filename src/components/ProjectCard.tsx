@@ -1,4 +1,5 @@
 import type { Project } from "../lib/types";
+import LikeButton from "./LikeButton";
 
 export default function ProjectCard({ p, index }: { p: Project; index?: number }) {
   return (
@@ -21,6 +22,7 @@ export default function ProjectCard({ p, index }: { p: Project; index?: number }
         <div className="pcard-links">
           {p.live_url && <a href={p.live_url} target="_blank" rel="noreferrer">Live ↗</a>}
           {p.repo_url && <a href={p.repo_url} target="_blank" rel="noreferrer">Source ↗</a>}
+          <LikeButton target={`project:${p.id}`} mini />
         </div>
       </div>
     </article>

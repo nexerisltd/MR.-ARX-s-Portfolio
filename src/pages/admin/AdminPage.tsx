@@ -3,12 +3,14 @@ import type { Session } from "@supabase/supabase-js";
 import { Link } from "react-router-dom";
 import { supabase } from "../../lib/supabase";
 import { useSettings } from "../../lib/SettingsContext";
+import AnalyticsTab from "./AnalyticsTab";
 import CharacterPanel from "./CharacterPanel";
 import FaviconPanel from "./FaviconPanel";
+import InquiriesTab from "./InquiriesTab";
 import ProfileTab from "./ProfileTab";
 import ProjectsTab from "./ProjectsTab";
 
-type Tab = "profile" | "character" | "favicon" | "projects";
+type Tab = "profile" | "character" | "favicon" | "projects" | "analytics" | "inquiries";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -49,6 +51,10 @@ export default function AdminPage() {
     return () => data.subscription.unsubscribe();
   }, []);
 
+  useEffect(() => {
+    if (session) { try { localStorage.setItem("nx_ignore", "1"); } catch { /* ignore */ } }
+  }, [session]);
+
   if (!configured)
     return (
       <div className="admin-login">
@@ -71,7 +77,7 @@ export default function AdminPage() {
       <header className="admin-top">
         <strong>Admin</strong>
         <div className="tabs">
-          {([["profile", "Profile & content"], ["character", "3D character"], ["favicon", "Favicon"], ["projects", "Projects"]] as [Tab, string][]).map(([k, l]) => (
+          {([["profile", "Profile & content"], ["character", "3D character"], ["favicon", "Favicon"], ["projects", "Projects"], ["inquiries", "Inquiries"], ["analytics", "Analytics"]] as [Tab, string][]).map(([k, l]) => (
             <button key={k} className={tab === k ? "on" : ""} onClick={() => setTab(k)}>{l}</button>
           ))}
         </div>
@@ -85,6 +91,8 @@ export default function AdminPage() {
         {tab === "character" && <CharacterPanel />}
         {tab === "favicon" && <FaviconPanel />}
         {tab === "projects" && <ProjectsTab />}
+        {tab === "inquiries" && <InquiriesTab />}
+        {tab === "analytics" && <AnalyticsTab />}
       </main>
     </div>
   );

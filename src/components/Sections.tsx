@@ -2,6 +2,8 @@ import { CSSProperties, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useTrack } from "../lib/scrollEngine";
 import { useSettings } from "../lib/SettingsContext";
+import { useIpStored } from "../lib/analytics";
+import InquiryForm from "./InquiryForm";
 import ProjectCard from "./ProjectCard";
 import Reveal from "./Reveal";
 import SplitText from "./SplitText";
@@ -194,11 +196,11 @@ export function Studio() {
           <div className="subs">
             {s.subBrands.map((b, i) => (
               <Reveal key={b.name} delay={i * 120}>
-                <a className="sub" href={b.url || "#"} target="_blank" rel="noreferrer" data-cursor="Visit">
-                  <span className="sub-tag">Brand of {s.brand}</span>
+                <a className="subbrand" href={b.url || "#"} target="_blank" rel="noreferrer" data-cursor="Visit">
+                  <span className="sb-tag">Brand of {s.brand}</span>
                   <h3>{b.name}</h3>
                   <p>{b.body}</p>
-                  <b className="sub-arrow">↗</b>
+                  <b className="sb-arrow">↗</b>
                 </a>
               </Reveal>
             ))}
@@ -225,6 +227,7 @@ export function Contact() {
             {s.socials.map((x) => <a key={x.url} href={x.url} target="_blank" rel="noreferrer">{x.label} ↗</a>)}
           </div>
         </Reveal>
+        <Reveal delay={260}><InquiryForm email={s.email} /></Reveal>
         <a className="badge-rot" href={`mailto:${s.email}`} aria-label="Email me" data-cursor="Say hi">
           <svg viewBox="0 0 160 160">
             <defs><path id="circ" d="M80,80 m-62,0 a62,62 0 1,1 124,0 a62,62 0 1,1 -124,0" /></defs>
@@ -240,9 +243,11 @@ export function Contact() {
 export function Footer() {
   const { settings: s } = useSettings();
   const sub = s.subBrands.map((b) => b.name).join(", ");
+  const ipStored = useIpStored();
   return (
     <footer className="footer wrap">
       <span>© {new Date().getFullYear()} {s.brand} · {s.name} ({s.alias}){sub ? ` · ${sub} is a ${s.brand} brand` : ""}</span>
+      <span className="privacy">Visit stats · approx. location · no cookies · {ipStored ? "IP address stored for up to 90 days" : "no IP stored"}</span>
       <a href="#top" className="totop">Back to top ↑</a>
     </footer>
   );

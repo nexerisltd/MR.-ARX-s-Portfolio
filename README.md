@@ -37,3 +37,40 @@ Supabase connect na thakle `src/lib/defaults.ts` er content dekhabe. `public/cha
 ## Brand structure
 
 Parent brand = **NexEris** (admin > Profile & content > "Parent brand"), sub brand = **NexApp** (admin > "Sub brands", ek line e `Name | Description | URL`). Ei duto hero lockup, nav, "The studio" section, footer ar contact badge e dekhay. Aro sub brand add korte ekta notun line dao.
+
+## Visitor analytics (admin > Analytics)
+
+1. Supabase SQL Editor e `supabase/analytics.sql` ekbar run koro (`schema.sql` age run kora thakte hobe).
+2. Site live deploy koro. Visitor ra ashle Admin > Analytics e dekhabe: live now, page views, unique visitors, sessions, returning, time on page, scroll depth, daily chart, top pages, referrer, utm, device/browser/OS, location (timezone), clicks (email, project link, outbound), section funnel (visitor kothay porjonto scroll korlo), recent visits.
+3. Privacy: cookie nai, IP save hoy na, fingerprinting nai. Bot, Do-Not-Track, localhost ar `/admin` track hoy na. Je browser e admin login korbe seta auto track bondho hoy (Analytics tab theke on/off kora jay).
+4. Local e test korte URL e `?track=1` dao (e.g. `http://localhost:5173/?track=1`).
+5. Visitor ra shudhu INSERT korte pare (RLS); data pora/delete shudhu tumi (admin) korte paro.
+
+## Visitor tracking v2 + Likes — setup
+
+**Supabase:** SQL Editor e `supabase/analytics.sql` abar run koro (purano data jay na, upgrade hoy).
+
+**Vercel (Project > Settings > Environment Variables):**
+- `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` (age theke ache)
+- `SUPABASE_SERVICE_ROLE_KEY` — Supabase > Project Settings > API > *service_role* key. **Eta secret**, shudhu Vercel e dao, kothao commit korba na, `VITE_` prefix dio na. Eta shudhu `api/like.ts` (server) e lage.
+- `IP_SALT` — ekta random lomba string (e.g. 32 char). IP hash er salt.
+
+Tarpor `npm install` (notun package: `@vercel/functions`) ar Vercel e deploy.
+
+**Kon file ki kore**
+- `api/geo.ts` — visitor er desh/shohor (Vercel er IP-geo) + IP er salted hash. Raw IP save hoy na.
+- `middleware.ts` — non-JS bot (Googlebot, GPTBot, curl, scanner…) server e dhore `bot_hits` e likhe. Manush der track kore na. Error hole site atkabe na.
+- `api/like.ts` — login chhara like. Ek jon, 7 diner moddhe, target prati ekbar. Limit server e: browser id (localStorage) **ba** hash(IP + User-Agent) mile gele block. Extra guard: same-origin only, bot block, honeypot, page khulei 1.2s er moddhe like reject.
+- `src/lib/bots.ts` — bot name/category list (Googlebot, GPTBot, ClaudeBot, AhrefsBot, WhatsApp preview, curl, scanner…). Notun bot add korte ekhane ekta line dao.
+- Admin > Analytics: Overview / Visitors (filter + detail + CSV) / Bots / Tracking links.
+
+**Limit (likes):** kono login chhara system 100% thik na. Same device e storage clear korle ba same network+browser e abar dile block hoy; kintu VPN/phone-data change kore + incognito dile bypass kora jay. Office/hostel er shared wifi te alada device (alada browser) ke block kore na.
+
+Local dev e `/api/*` ar middleware cholbe na (Vite `/api` ke 404 JSON dey, terminal e error ashe na), tai like button lukano thakbe ar location ashbe na — Vercel e deploy kore dekho. `vercel dev` diye local e o chalano jay.
+
+## Raw IP + Inquiries ("Start a project" form)
+
+- **Raw IP (optional):** default e IP save hoy na (shudhu salted hash + country/city). Vercel env e `STORE_RAW_IP=1` dile `visits` ar `bot_hits` e IP save hoy, ar site er footer e auto likha thake "IP address stored for up to 90 days". Admin > Analytics > Overview > Privacy e "90 diner purano IP muchho" / "Shob IP muchho" button ache. Auto-cleanup er jonno `analytics.sql` e pg_cron er commented snippet ache.
+- **Naam:** web e naam automatically jana jay na. Naam pawar legit upay: (1) Contact section er "Start a project" form (naam, email, ki dorkar, budget, timeline, message) — admin > **Inquiries** e ashe, saathe oi manush ta kon page/section dekhlo, kothay theke ashlo; (2) **Tracking links** (`?v=code`) — je link ta tumi nijei pathao; (3) Inquiry dile Visitors list e oi visitor er naam/email dekhay.
+- Form er spam guard: same-origin, bot block, honeypot, minimum fill time, ek network theke 24h e max 3 ta.
+- Notun SQL ache: `analytics.sql` abar run koro.

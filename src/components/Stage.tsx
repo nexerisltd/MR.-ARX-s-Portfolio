@@ -109,12 +109,6 @@ export default function Stage({ cfg, onFail }: { cfg: CharacterCfg; onFail: () =
     );
     scene.add(dust);
 
-    // character er pechone ghurano amber ring — aura
-    const ringA = new THREE.Mesh(new THREE.TorusGeometry(1.5, 0.006, 8, 180), new THREE.MeshBasicMaterial({ color: 0xd9a15b, transparent: true, opacity: 0.4, blending: THREE.AdditiveBlending, depthWrite: false }));
-    const ringB = new THREE.Mesh(new THREE.TorusGeometry(1.92, 0.004, 8, 180), new THREE.MeshBasicMaterial({ color: 0xffd7a8, transparent: true, opacity: 0.2, blending: THREE.AdditiveBlending, depthWrite: false }));
-    ringA.position.set(0, 0.05, -0.9);
-    ringB.position.set(0, 0.05, -1.3);
-    root.add(ringA, ringB);
 
     let disposed = false, raf = 0, visH = 1, visW = 1, ready = false;
     const dracoLoader = new DRACOLoader();
@@ -268,10 +262,6 @@ export default function Stage({ cfg, onFail }: { cfg: CharacterCfg; onFail: () =
       const op = Math.round(state.o * ie * 500) / 500;
       if (op !== lastOp) { lastOp = op; renderer.domElement.style.opacity = String(op); }
 
-      if (!reduce) {
-        ringA.rotation.set(1.15 + Math.sin(t * 0.4) * 0.12, 0.2, t * 0.18);
-        ringB.rotation.set(1.0 + Math.cos(t * 0.3) * 0.15, -0.3, -t * 0.12);
-      }
       if (!reduce) {
         const p = dGeo.attributes.position as THREE.BufferAttribute;
         for (let i = 0; i < DUST; i++) {
