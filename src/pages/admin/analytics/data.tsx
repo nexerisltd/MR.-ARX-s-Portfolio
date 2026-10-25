@@ -30,12 +30,13 @@ export async function fetchAll<T>(table: string, since: string): Promise<T[]> {
 }
 
 // ---------- formatting helpers ----------
+export const dec = (s: string) => { try { return decodeURIComponent(s); } catch { return s; } };
 export const flag = (cc?: string | null) =>
   cc && /^[A-Za-z]{2}$/.test(cc) ? String.fromCodePoint(...Array.from(cc.toUpperCase()).map((c) => 127397 + c.charCodeAt(0))) : "🌐";
 const dn = (() => { try { return new Intl.DisplayNames(["en"], { type: "region" }); } catch { return null; } })();
 export const countryName = (cc?: string | null) => (cc ? dn?.of(cc.toUpperCase()) ?? cc : "Unknown");
 export const place = (v: { country?: string | null; city?: string | null; timezone?: string | null }) =>
-  v.country ? `${flag(v.country)} ${v.city ? decodeURIComponent(v.city) + ", " : ""}${countryName(v.country)}` : v.timezone ? `🌐 ${v.timezone}` : "🌐 Unknown";
+  v.country ? `${flag(v.country)} ${v.city ? dec(v.city) + ", " : ""}${countryName(v.country)}` : v.timezone ? `🌐 ${v.timezone}` : "🌐 Unknown";
 export const fmtT = (s: number) => (s >= 3600 ? `${Math.floor(s / 3600)}h ${Math.round((s % 3600) / 60)}m` : s >= 60 ? `${Math.floor(s / 60)}m ${Math.round(s % 60)}s` : `${Math.round(s)}s`);
 export const ago = (iso: string) => {
   const s = (Date.now() - new Date(iso).getTime()) / 1000;

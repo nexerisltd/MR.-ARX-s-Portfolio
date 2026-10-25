@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { BarList, BotHit, count, flag, Visit, ago, countryName } from "./data";
+import { BarList, BotHit, count, flag, Visit, ago, countryName, dec } from "./data";
 
 interface Item { t: string; name: string; cat: string; path: string; country: string; city: string; ua: string; via: "browser" | "server" }
 
@@ -72,7 +72,7 @@ export default function Bots({ visits, hits, serverReady }: { visits: Visit[]; h
           {filtered.slice(0, 40).map((i, k) => (
             <div className="btr2" key={k}>
               <span>{ago(i.t)}</span><span><b>{i.name}</b></span><span>{i.path}</span>
-              <span>{i.country ? `${flag(i.country)} ${i.city ? decodeURIComponent(i.city) : countryName(i.country)}` : "—"}</span>
+              <span>{i.country ? `${flag(i.country)} ${i.city ? dec(i.city) : countryName(i.country)}` : "—"}</span>
               <span className="muted">{i.via === "server" ? "server" : "browser"}</span>
             </div>
           ))}

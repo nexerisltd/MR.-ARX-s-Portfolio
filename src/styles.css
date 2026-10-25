@@ -452,3 +452,14 @@ html.ready .rise { opacity: 1; transform: none; transition: opacity 1s var(--eas
 .inq-card { gap: 12px; }
 .inq-name { font: 400 1.6rem var(--serif); }
 .inq-msg { white-space: pre-wrap; background: #0f0d0b; border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; color: #d8d0c6; font-size: .9rem; }
+
+/* intent poll */
+.intent { position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); z-index: 62; width: min(520px, calc(100vw - 28px)); padding: 18px 22px 14px; border-radius: 20px; border: 1px solid rgba(217,161,91,.4); background: rgba(18,17,16,.96); box-shadow: 0 20px 60px rgba(0,0,0,.5); animation: intentIn .6s var(--ease); }
+@keyframes intentIn { from { opacity: 0; transform: translate(-50%, 24px); } }
+.intent-q { font: 400 1.4rem var(--serif); margin-bottom: 10px; }
+.intent-opts { display: flex; flex-wrap: wrap; gap: 8px; }
+.intent-n { font-size: .7rem; color: var(--mute); margin-top: 10px; }
+.intent-x { position: absolute; right: 12px; top: 10px; background: none; border: 0; color: var(--mute); cursor: pointer; font-size: .9rem; }
+.intent-x:hover { color: var(--ink); }
+.intent-thanks { font: 400 1.2rem var(--serif); color: var(--accent); padding: 6px 0; }
+@media (max-width: 900px) { .intent { bottom: 70px; } }

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { STATUSES } from "../../lib/inquiry";
 import { supabase } from "../../lib/supabase";
-import { ago, BarList, count, countryName, evText, Ev, flag, fmtT, Inquiry, place, Visit, when } from "./analytics/data";
+import { ago, BarList, count, countryName, evText, Ev, flag, fmtT, Inquiry, place, Visit, when, dec } from "./analytics/data";
 
 export default function InquiriesTab() {
   const [rows, setRows] = useState<Inquiry[]>([]);
@@ -97,7 +97,7 @@ export default function InquiriesTab() {
             <button className="btn" onClick={() => setOpen(open === r.id ? null : r.id)}>{open === r.id ? "Hide" : "Show"} what they did on your site</button>
             {open === r.id && (
               <div className="facts">
-                <div><span>Location</span><b>{last ? place(last) : r.country ? `${flag(r.country)} ${r.city ? decodeURIComponent(r.city) + ", " : ""}${countryName(r.country)}` : "—"}</b></div>
+                <div><span>Location</span><b>{last ? place(last) : r.country ? `${flag(r.country)} ${r.city ? dec(r.city) + ", " : ""}${countryName(r.country)}` : "—"}</b></div>
                 <div><span>IP address</span><b>{vs.find((v) => v.ip)?.ip || "not stored"}</b></div>
                 <div><span>Device</span><b>{last ? `${last.device} · ${last.browser} · ${last.os}` : "—"}</b></div>
                 <div><span>Time on site / visits</span><b>{vs.length ? `${fmtT(vs.reduce((a, v) => a + v.duration_s, 0))} · ${vs.length} visit${vs.length > 1 ? "s" : ""}` : "—"}</b></div>

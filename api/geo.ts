@@ -1,26 +1,30 @@
-import { geolocation, ipAddress } from "@vercel/functions/headers";
-
-// Vercel Edge Function: visitor er approx. location (Vercel nijei IP theke dey) + IP er salted hash.
-// Default e raw IP kothao save/return hoy na (opt-in niche). Optional: Vercel env e IP_SALT dao (random lomba string).
+// ⚙️ GENERATED FILE — edit `server-src/` o, tarpor `npm run sync:server`. (Vercel e local import cholbe na, tai sob inline.)
+/** Visitor er approx. location + IP er salted hash. Raw IP default e save/return hoy na (env STORE_RAW_IP=1 dile hoy). */
 export const config = { runtime: "edge" };
 
-async function hash(s: string) {
+// ---- geo / ip (Vercel request header theke — kono package lage na) ----
+const hdr = (r: Request, k: string) => r.headers.get(k) || "";
+const dec = (s: string) => { try { return decodeURIComponent(s); } catch { return s; } };
+const where = (r: Request) => ({
+  country: hdr(r, "x-vercel-ip-country") || null,
+  region: hdr(r, "x-vercel-ip-country-region") || null,
+  city: dec(hdr(r, "x-vercel-ip-city")) || null,
+});
+const clientIp = (r: Request) => hdr(r, "x-real-ip") || hdr(r, "x-forwarded-for").split(",")[0].trim() || null;
+async function sha(s: string, bytes = 12) {
   const d = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
-  return Array.from(new Uint8Array(d)).slice(0, 8).map((b) => b.toString(16).padStart(2, "0")).join("");
+  return Array.from(new Uint8Array(d)).slice(0, bytes).map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
 export default async function handler(req: Request) {
-  const g = geolocation(req);
-  const ip = ipAddress(req);
-  const salt = (typeof process !== "undefined" && process.env?.IP_SALT) || "nexeris";
-  // Raw IP default e save hoy na. Vercel env e STORE_RAW_IP=1 dile tobei (site er footer e auto notice dekhay).
-  const storeIp = typeof process !== "undefined" && process.env?.STORE_RAW_IP === "1";
+  const g = where(req);
+  const ip = clientIp(req);
+  const salt = process.env.IP_SALT || "nexeris";
+  const storeIp = process.env.STORE_RAW_IP === "1";
   const body = {
-    country: g.country ?? null,
-    region: g.countryRegion ?? null,
-    city: g.city ?? null,
-    ip_hash: ip ? await hash(salt + ip) : null,
-    ip: storeIp ? ip ?? null : null,
+    ...g,
+    ip_hash: ip ? await sha(salt + ip, 8) : null,
+    ip: storeIp ? ip : null,
     ip_stored: storeIp,
   };
   return new Response(JSON.stringify(body), { headers: { "content-type": "application/json", "cache-control": "no-store" } });

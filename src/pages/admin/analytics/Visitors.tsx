@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Avatar, countryName, evText, Ev, fmtT, flag, Like, place, VRow, when, ago, count } from "./data";
+import { Avatar, countryName, evText, Ev, fmtT, flag, Like, place, VRow, when, ago, count, dec } from "./data";
 
 type Sort = "last" | "visits" | "time" | "scroll";
 const sel = (v: string) => (v === "all" ? "" : v);
@@ -96,7 +96,7 @@ export default function Visitors({ rows, events, likes, showBots, setShowBots, b
       <div className="live-strip">
         <span className="live-dot"><i className="pulse" /> {live.length} online now</span>
         {live.slice(0, 6).map((r) => (
-          <button key={r.id} className="chip" onClick={() => setOpen(r)} title={r.lastPath}>{flag(r.country)} {r.city ? decodeURIComponent(r.city) : r.code} · {r.device}</button>
+          <button key={r.id} className="chip" onClick={() => setOpen(r)} title={r.lastPath}>{flag(r.country)} {r.city ? dec(r.city) : r.code} · {r.device}</button>
         ))}
       </div>
 

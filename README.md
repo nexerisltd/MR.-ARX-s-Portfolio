@@ -55,7 +55,7 @@ Parent brand = **NexEris** (admin > Profile & content > "Parent brand"), sub bra
 - `SUPABASE_SERVICE_ROLE_KEY` — Supabase > Project Settings > API > *service_role* key. **Eta secret**, shudhu Vercel e dao, kothao commit korba na, `VITE_` prefix dio na. Eta shudhu `api/like.ts` (server) e lage.
 - `IP_SALT` — ekta random lomba string (e.g. 32 char). IP hash er salt.
 
-Tarpor `npm install` (notun package: `@vercel/functions`) ar Vercel e deploy.
+Tarpor `npm install` ar Vercel e deploy. (Ager version e `@vercel/functions` package chhilo — ekhon lage na, server file gulo kono package chhara header theke geo/IP pay.)
 
 **Kon file ki kore**
 - `api/geo.ts` — visitor er desh/shohor (Vercel er IP-geo) + IP er salted hash. Raw IP save hoy na.
@@ -74,3 +74,18 @@ Local dev e `/api/*` ar middleware cholbe na (Vite `/api` ke 404 JSON dey, termi
 - **Naam:** web e naam automatically jana jay na. Naam pawar legit upay: (1) Contact section er "Start a project" form (naam, email, ki dorkar, budget, timeline, message) — admin > **Inquiries** e ashe, saathe oi manush ta kon page/section dekhlo, kothay theke ashlo; (2) **Tracking links** (`?v=code`) — je link ta tumi nijei pathao; (3) Inquiry dile Visitors list e oi visitor er naam/email dekhay.
 - Form er spam guard: same-origin, bot block, honeypot, minimum fill time, ek network theke 24h e max 3 ta.
 - Notun SQL ache: `analytics.sql` abar run koro.
+
+## ⚠️ Server file (middleware.ts + api/*) er niyom — kono `import` nai!
+
+Vercel `middleware.ts` ar `api/*.ts` prottek file ke **alada alada compile kore, bundle kore na**. Tai oi file gulo theke onno folder er TypeScript (`../src/lib/bots` ityadi) import korle build pass kore, kintu **runtime e file khuje pay na** → pura site `500 MIDDLEWARE_INVOCATION_FAILED` hoye jay. Tai ei file gulo ekdom self-contained.
+
+- Edit korte hole `server-src/` e koro (`server-src/middleware.ts`, `server-src/api/*.ts`, ar shared `server-src/_parts/*`), tarpor `npm run sync:server` — eta bot list (`src/lib/bots.ts`), inquiry option (`src/lib/inquiry.ts`) ar helper gulo inline kore root `middleware.ts` ar `api/*.ts` generate kore. Generated file gulo commit koro.
+- `sync:server` import paile fail kore, jate bhul kore abar import dhukiye ne dite na paro.
+- **Notun middleware/api change deploy korar age Preview e test koro:** nijer branch e push → Vercel er Preview URL e site khule dekho → thik thakle main e merge.
+- Jodi kokhono middleware error dey: root theke `middleware.ts` delete kore push koro, site sathe sathe ferot ashbe (shudhu non-JS bot logging bondho thakbe).
+
+## Telegram alert (optional)
+Vercel env: `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` dile (1) notun inquiry ashle, (2) tomar dewa tracking link (`?v=code`) keu prothom khulle Telegram e message jabe. Na dile kichu hoy na.
+
+## "What brings you here?" poll
+Visitor ke 25s ba 50% scroll por ek-tap poll dekhay (Hire a developer / Need an app built / Just browsing / …). Naam-email lage na. Result Admin > Analytics > Overview > Clicks e `intent · …` hishebe dekhay. Kon project card visitor 1.2s+ dhore dekhlo seta `project view · …` hishebe.

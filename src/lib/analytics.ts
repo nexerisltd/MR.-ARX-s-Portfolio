@@ -15,6 +15,8 @@ let timer = 0;
 let wired = false;
 const seen = new Set<string>();
 let io: IntersectionObserver | null = null;
+let pio: IntersectionObserver | null = null;
+const firedProjects = new Set<string>();
 
 let ipStored = false;
 const ipSubs = new Set<() => void>();
@@ -123,7 +125,9 @@ export function trackPageview(path: string) {
   if (cur) beat();
   clearInterval(timer);
   io?.disconnect();
+  pio?.disconnect();
   seen.clear();
+  firedProjects.clear();
   cur = null;
   if (!trackingEnabled() || path.startsWith("/admin")) return;
   const q = new URLSearchParams(location.search);
@@ -164,6 +168,15 @@ export function trackPageview(path: string) {
     user_agent: bot.isBot ? navigator.userAgent.slice(0, 300) : null,
   };
   void getGeo().then((g) => send("visits", { ...base, ...g }));
+  // naamer tracking link khulle (session e ekbar) Telegram ping — server e dedupe hoy
+  if (link && !bot.isBot) {
+    try {
+      if (!sessionStorage.getItem("nx_notified")) {
+        sessionStorage.setItem("nx_notified", "1");
+        fetch("/api/notify", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ code: link, sid: id(sessionStorage, "nx_sid") }) }).catch(() => {});
+      }
+    } catch { /* ignore */ }
+  }
   if (bot.isBot) return; // bot er jonno heartbeat / event nai
   wire();
   cur = { id: vid, start: performance.now(), last: performance.now(), active: 0, maxScroll: 0 };
@@ -195,6 +208,28 @@ export function observeSections() {
     { rootMargin: "-45% 0px -45% 0px" }
   );
   document.querySelectorAll("[data-stage]").forEach((el) => io!.observe(el));
+}
+
+/** Kon project card e visitor 1.2s+ dhore chilo (60%+ visible) — kon project beshi attention pay. */
+export function observeProjects() {
+  if (!cur) return;
+  pio?.disconnect();
+  const timers = new Map<Element, number>();
+  pio = new IntersectionObserver(
+    (es) => es.forEach((e) => {
+      const el = e.target as HTMLElement;
+      const title = el.querySelector("h3")?.textContent?.trim() || "";
+      if (e.isIntersecting && e.intersectionRatio >= 0.6) {
+        if (title && !firedProjects.has(title) && !timers.has(el))
+          timers.set(el, window.setTimeout(() => { firedProjects.add(title); trackEvent("project_view", title); timers.delete(el); }, 1200));
+      } else {
+        const t = timers.get(el);
+        if (t) { clearTimeout(t); timers.delete(el); }
+      }
+    }),
+    { threshold: [0, 0.6, 1] }
+  );
+  document.querySelectorAll(".pcard:not(.allcard)").forEach((el) => pio!.observe(el));
 }
 
 function onClick(e: MouseEvent) {

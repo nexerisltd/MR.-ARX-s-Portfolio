@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { supabase } from "../../../lib/supabase";
-import { BarList, count, countryName, Ev, flag, fmtT, Like, Visit } from "./data";
+import { BarList, count, countryName, Ev, flag, fmtT, Like, Visit, dec } from "./data";
 
 export const RANGES = { "24h": 1, "7d": 7, "30d": 30, "90d": 90 } as const;
 export type R = keyof typeof RANGES;
@@ -43,7 +43,7 @@ export default function Overview({ humans, events, likes, botCount, range, onCha
       scroll: visits.length ? Math.round(visits.reduce((a, v) => a + v.max_scroll, 0) / visits.length) : 0,
       pages: count(visits.map((v) => v.path)), refs: count(visits.map((v) => v.referrer), "Direct / none"),
       utm: count(visits.filter((v) => v.utm_source).map((v) => v.utm_source)),
-      countries: count(visits.map(cc), "Unknown"), cities: count(visits.filter((v) => v.city).map((v) => `${flag(v.country)} ${decodeURIComponent(v.city!)}`)),
+      countries: count(visits.map(cc), "Unknown"), cities: count(visits.filter((v) => v.city).map((v) => `${flag(v.country)} ${dec(v.city!)}`)),
       devices: count(visits.map((v) => v.device)), browsers: count(visits.map((v) => v.browser)), oses: count(visits.map((v) => v.os)),
       langs: count(visits.map((v) => v.language)),
       clicks: count(events.filter((e) => e.name !== "section").map((e) => `${e.name.replace("_", " ")} · ${e.label ?? ""}`)),

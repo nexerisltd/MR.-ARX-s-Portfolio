@@ -2,7 +2,8 @@ import { lazy, Suspense, useEffect, useState } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
 import Cursor from "./components/Cursor";
 import LikeButton from "./components/LikeButton";
-import { observeSections, trackPageview } from "./lib/analytics";
+import { observeProjects, observeSections, trackPageview } from "./lib/analytics";
+import IntentPrompt from "./components/IntentPrompt";
 import Loader from "./components/Loader";
 import Nav from "./components/Nav";
 import Home from "./pages/Home";
@@ -29,14 +30,16 @@ export default function App() {
   // anonymous visit tracking (admin e dekhao jay)
   useEffect(() => {
     trackPageview(pathname);
-    const t = setTimeout(observeSections, 1500);
-    return () => clearTimeout(t);
+    const t1 = setTimeout(() => { observeSections(); observeProjects(); }, 2500);
+    const t2 = setTimeout(observeProjects, 7000); // project card gulo Supabase theke pore ashle
+    return () => { clearTimeout(t1); clearTimeout(t2); };
   }, [pathname]);
   return (
     <>
       {booting && <Loader onDone={() => setBooting(false)} />}
       {!pathname.startsWith("/admin") && <Cursor />}
       {!pathname.startsWith("/admin") && <LikeButton target="site" />}
+      {!pathname.startsWith("/admin") && <IntentPrompt />}
       <ScrollManager />
       {!pathname.startsWith("/admin") && <Nav />}
       <Suspense fallback={null}>
