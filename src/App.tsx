@@ -7,6 +7,7 @@ import IntentPrompt from "./components/IntentPrompt";
 import Loader from "./components/Loader";
 import Nav from "./components/Nav";
 import Home from "./pages/Home";
+import NotFound from "./pages/NotFound";
 import ProjectsPage from "./pages/ProjectsPage";
 
 const AdminPage = lazy(() => import("./pages/admin/AdminPage"));
@@ -43,12 +44,14 @@ export default function App() {
       <ScrollManager />
       {!pathname.startsWith("/admin") && <Nav />}
       <Suspense fallback={null}>
+      <div key={pathname} className="route">
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/projects" element={<ProjectsPage />} />
         <Route path="/admin" element={<AdminPage />} />
-        <Route path="*" element={<Home />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
+      </div>
       </Suspense>
     </>
   );

@@ -1,4 +1,5 @@
 :root {
+  color-scheme: dark;
   --bg: #0a0908; --bg2: #121110; --ink: #f1ebe3; --mute: #9a9189; --accent: #d9a15b;
   --line: rgba(255, 255, 255, 0.09); --serif: "Instrument Serif", Georgia, serif;
   --mono: "JetBrains Mono", ui-monospace, monospace; --sans: "Manrope", system-ui, sans-serif;
@@ -463,3 +464,58 @@ html.ready .rise { opacity: 1; transform: none; transition: opacity 1s var(--eas
 .intent-x:hover { color: var(--ink); }
 .intent-thanks { font: 400 1.2rem var(--serif); color: var(--accent); padding: 6px 0; }
 @media (max-width: 900px) { .intent { bottom: 70px; } }
+
+
+/* ================= scrollbar (site vibe er shathe match) ================= */
+/* Chrome / Edge / Safari */
+::-webkit-scrollbar { width: 12px; height: 12px; }
+::-webkit-scrollbar-track { background: #0c0b0a; border-left: 1px solid rgba(255,255,255,.04); }
+::-webkit-scrollbar-thumb { background: linear-gradient(#e0ab68, #8a6234); border-radius: 99px; border: 3px solid #0c0b0a; min-height: 56px; }
+::-webkit-scrollbar-thumb:hover { background: linear-gradient(#f4c98d, #b98644); }
+::-webkit-scrollbar-thumb:active { background: #f4c98d; }
+::-webkit-scrollbar-corner { background: #0c0b0a; }
+/* Firefox (Chrome 121+ e scrollbar-color dile ::-webkit-scrollbar ignore hoy, tai shudhu Firefox e) */
+@supports (-moz-appearance: none) { html, * { scrollbar-width: thin; scrollbar-color: #d9a15b #0c0b0a; } }
+
+/* ================= polish ================= */
+::selection { background: rgba(217,161,91,.35); color: #fff; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
+input:focus-visible, textarea:focus-visible, select:focus-visible { outline: none; }
+html { caret-color: var(--accent); }
+
+.route { animation: routeIn .7s var(--ease); }
+@keyframes routeIn { from { opacity: 0; } }
+
+/* button shine */
+.btn { position: relative; overflow: hidden; isolation: isolate; }
+.btn-solid::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,.45) 50%, transparent 70%); transform: translateX(-120%); transition: transform .7s var(--ease); }
+.btn-solid:hover::after { transform: translateX(120%); }
+
+/* animated underline links */
+.socials a, .totop { position: relative; }
+.socials a::after, .totop::after { content: ""; position: absolute; left: 0; right: 0; bottom: -3px; height: 1px; background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform .35s var(--ease); }
+.socials a:hover::after, .totop:hover::after { transform: scaleX(1); }
+
+/* section rail (dan pashe dot nav) */
+.rail { position: fixed; right: 26px; top: 50%; transform: translateY(-50%); z-index: 45; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+.rail button { display: flex; align-items: center; gap: 12px; background: none; border: 0; cursor: pointer; padding: 6px 2px; color: var(--mute); }
+.rail button span { font: .66rem var(--mono); letter-spacing: .14em; text-transform: uppercase; opacity: 0; transform: translateX(8px); transition: opacity .3s, transform .3s var(--ease); pointer-events: none; }
+.rail button:hover span, .rail button.on span { opacity: 1; transform: none; }
+.rail button.on span { color: var(--accent); }
+.rail button i { display: block; width: 6px; height: 6px; border-radius: 99px; background: rgba(255,255,255,.28); transition: height .4s var(--ease), background .3s, box-shadow .3s; }
+.rail button:hover i { background: var(--ink); }
+.rail button.on i { height: 24px; background: var(--accent); box-shadow: 0 0 14px rgba(217,161,91,.7); }
+.rail-top { margin-top: 10px; width: 34px; height: 34px; justify-content: center; border: 1px solid var(--line) !important; border-radius: 50%; color: var(--ink) !important; opacity: 0; pointer-events: none; transform: translateY(8px); transition: opacity .3s, transform .3s var(--ease), border-color .3s; }
+.rail-top.show { opacity: 1; pointer-events: auto; transform: none; }
+.rail-top:hover { border-color: var(--accent) !important; color: var(--accent) !important; }
+@media (max-width: 900px) { .rail { display: none; } }
+
+/* giant footer wordmark */
+.footer { position: relative; padding-top: 18vw; overflow: hidden; }
+.footer-word { position: absolute; left: 0; right: 0; top: 0; text-align: center; font: 400 clamp(6rem, 22vw, 20rem)/.9 var(--serif); letter-spacing: -.03em; color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,.07); white-space: nowrap; user-select: none; pointer-events: none; background: linear-gradient(#d9a15b22, transparent 70%); -webkit-background-clip: text; background-clip: text; }
+.footer > span, .footer > a { position: relative; }
+
+/* 404 */
+.nf { min-height: 100svh; display: grid; align-content: center; justify-items: start; gap: 18px; width: min(1200px, 92vw); margin: 0 auto; position: relative; z-index: 2; }
+.nf-big { font: 400 clamp(6rem, 22vw, 18rem)/.85 var(--serif); }
+.nf-big em { color: var(--accent); }

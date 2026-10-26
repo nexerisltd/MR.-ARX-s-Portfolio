@@ -89,3 +89,7 @@ Vercel env: `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` dile (1) notun inquiry ashl
 
 ## "What brings you here?" poll
 Visitor ke 25s ba 50% scroll por ek-tap poll dekhay (Hire a developer / Need an app built / Just browsing / …). Naam-email lage na. Result Admin > Analytics > Overview > Clicks e `intent · …` hishebe dekhay. Kon project card visitor 1.2s+ dhore dekhlo seta `project view · …` hishebe.
+
+## Scrollbar + polish
+- Scrollbar site er vibe e style kora (dark track, amber thumb): `src/styles.css` er sheshe "scrollbar" block. Chrome/Edge/Safari `::-webkit-scrollbar`, Firefox `scrollbar-color`. Rang bodlate `#e0ab68 / #8a6234` (thumb) ar `#0c0b0a` (track) bodlao.
+- `SectionRail` (dan pashe dot nav + back-to-top), route fade, button shine, animated underline, giant footer wordmark, 404 page, text selection / focus ring amber.

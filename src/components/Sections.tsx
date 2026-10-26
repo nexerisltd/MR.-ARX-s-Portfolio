@@ -246,6 +246,7 @@ export function Footer() {
   const ipStored = useIpStored();
   return (
     <footer className="footer wrap">
+      <div className="footer-word" aria-hidden>{s.brand}</div>
       <span>© {new Date().getFullYear()} {s.brand} · {s.name} ({s.alias}){sub ? ` · ${sub} is a ${s.brand} brand` : ""}</span>
       <span className="privacy">Visit stats · approx. location · no cookies · {ipStored ? "IP address stored for up to 90 days" : "no IP stored"}</span>
       <a href="#top" className="totop">Back to top ↑</a>
